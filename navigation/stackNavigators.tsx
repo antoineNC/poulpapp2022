@@ -6,34 +6,23 @@ import {
 } from "@react-navigation/stack";
 import { TouchableOpacity, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
-//import * as firebase from "firebase";
-//import { PostData } from "../Services/firestore.service";
-
-//import Connexion from "../screens/Connexion/Connexion";
-//import Inscription from "../screens/Connexion/Inscription";
-import FilActu from "../screens/FilActu/FilActu";
-import Calendrier from "../screens/FilActu/Calendrier";
-import CreerPost from "../screens/FilActu/CreerPost";
-import ModifPost from "../screens/FilActu/ModifierPost";
+import Post from "../Services/post.model";
+import FilActu from "../screens/Actualite/FilActu";
+import Calendrier from "../screens/Actualite/Calendrier";
+import CreerPost from "../screens/CDF/CreerPost";
+import ModifPost from "../screens/Actualite/ModifierPost";
 import Calabar from "../screens/Calabar";
-import CoupeFamilles from "../screens/CoupeFamilles";
-import Menu from "../screens/Menu/Menu";
-//import GererMesPosts from "../screens/Menu/GererMesPosts";
-//import Partenariats from "../screens/Menu/Partenariats";
-//import Asso from "../screens/Menu/Asso";
-//import CartesAdhesions from "../screens/Menu/CartesAdhesions";
-//import Clubs from "../screens/Menu/Clubs";
-//import Parametres from "../screens/Menu/Parametres";
-//import BoiteQuestions from "../screens/Menu/BoiteQuestions";
+import CoupeFamilles from "../screens/CDF/CoupeFamilles";
+import Menu from "../screens/Menu";
 
 export type RootStackParamList = {
   Connexion: undefined;
   Inscription: undefined;
   FildActu: undefined;
   Calendrier: undefined;
-  CreerPost: undefined;
+  CreerPost: { data: Array<Post> };
   Calabar: undefined;
-  CoupeFamilles: undefined;
+  CoupeFamilles: { updateData: Array<Post> };
   Menu: undefined;
   GererMesPosts: undefined;
   Partenariats: undefined;
@@ -114,6 +103,16 @@ export const CoupeFamillesStackScreen = () => {
           // ),
         })}
       />
+      <CoupeFamillesStack.Screen
+        name="CreerPost"
+        options={{ title: "Créer un post" }}
+        component={CreerPost}
+      />
+      {/* <CoupeFamillesStack.Screen
+        name="ModifPost"
+        options={{ title: "Modifier un post" }}
+        component={ModifPost}
+      /> */}
     </CoupeFamillesStack.Navigator>
   );
 };
@@ -128,23 +127,8 @@ export const MenuStackScreen = () => {
         options={({ navigation }) => ({
           headerLeft: () => null,
           headerRight: () => null,
-          // (
-          //   <TouchableOpacity
-          //     onPress={() => deconnexion(navigation)}
-          //     style={styles.quitButton}
-          //   >
-          //     <Icon name="sign-out" type="font-awesome" color="#52234E" />
-          //   </TouchableOpacity>
-          // ),
         })}
       />
-      {/* <FilActuStack.Screen name="GererMesPosts" component={GererMesPosts} />
-      <FilActuStack.Screen name="Partenariats" component={Partenariats} />
-      <FilActuStack.Screen name="Asso" component={Asso} />
-      <FilActuStack.Screen name="CartesAdhesions" component={CartesAdhesions} />
-      <FilActuStack.Screen name="Clubs" component={Clubs} />
-      <FilActuStack.Screen name="Parametres" component={Parametres} />
-      <FilActuStack.Screen name="BoiteQuestions" component={BoiteQuestions} /> */}
     </MenuStack.Navigator>
   );
 };

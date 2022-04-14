@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
@@ -10,22 +10,26 @@ import {
   Alert,
 } from "react-native";
 import Constants from "expo-constants";
-import firestoreService from "../../Services/firestore.service";
 import { CheckBox } from "react-native-elements";
-import { NavigationProps } from "../../Navigation/stackNavigators";
-
+import {
+  NavigationProps,
+  RootStackParamList,
+} from "../../Navigation/stackNavigators";
+import { RouteProp } from "@react-navigation/core";
 import DatePicker from "react-native-datepicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import RNPickerSelect from "react-native-picker-select";
 import { FlatList } from "react-native-gesture-handler";
-import Tag from "../../Components/Tag";
+import Tag from "../../components/Tag";
 
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
+import { Route } from "@react-navigation/native";
 LogBox.ignoreAllLogs();
 
 interface CreerPostState {
+  id: string;
   titre: string;
   description: string;
   tags: string;
@@ -36,16 +40,18 @@ interface CreerPostState {
   heureDebut: string;
   heureFin: string;
   tagsList: Array<string>;
-
   timePickerVisibleStart: boolean;
   timePickerVisibleEnd: boolean;
   image: any;
-
   editor: string;
 }
 
-export default class CreerPost extends React.Component<
-  NavigationProps,
+interface CreerPostProps extends NavigationProps {
+  route: RouteProp<RootStackParamList, "CreerPost">;
+}
+
+export default class CreerPost extends Component<
+  CreerPostProps,
   CreerPostState
 > {
   // Permet de récupérer la date d'aujourd'hui, pour afficher la valeur par défaut dans le dateTimePicker
@@ -66,6 +72,7 @@ export default class CreerPost extends React.Component<
   };
 
   state: CreerPostState = {
+    id: "",
     titre: "",
     description: "",
     tags: "",
@@ -84,49 +91,30 @@ export default class CreerPost extends React.Component<
 
   componentDidMount() {
     // Permet de définir l'éditeur du post selon l'utilisateur actif
-    const user = firestoreService.getCurrentUser();
+    const user = "bds";
     this.setState({ editor: user });
   }
 
   addPost = () => {
     // Vérification si le post n'est pas vide (il doit contenir au moins un titre)
     if (this.state.titre != "") {
+      var dataArray = this.props.route.params.data;
       // Création du post en faisant appel à firestore.Service
       // Si c'est un événement, on transmet les propriétés correspondantes
       if (this.state.eventCheck == true) {
-        firestoreService.addPost({
+        dataArray.push({
+          id: this.state.id,
           titre: this.state.titre,
           description: this.state.description,
-          tags: this.state.tagsList,
           image: this.state.image,
-          editor: this.state.editor,
-          event: this.state.eventCheck,
-          dateDebut: this.state.dateDebut,
-          dateFin: this.state.dateFin,
-          heureDebut: this.state.heureDebut,
-          heureFin: this.state.heureFin,
-          visibleSurCalendrier: this.state.addCalendarCheck,
-        });
-      }
-      // Si ce n'est pas un événement, on remplit les champs correspondant à un événement par ""
-      // (sinon, la date d'aujourd'hui serait enregistrée par défaut)
-      else {
-        firestoreService.addPost({
-          titre: this.state.titre,
-          description: this.state.description,
           tags: this.state.tagsList,
-          dateDebut: "",
-          dateFin: "",
-          heureDebut: "",
-          heureFin: "",
-          visibleSurCalendrier: false,
-          image: this.state.image,
           editor: this.state.editor,
-          event: this.state.eventCheck,
         });
       }
       // Une fois l'événement créé, on navigue vers l'écran du fil d'actualité
-      this.props.navigation.navigate("FilActu");
+      this.props.navigation.navigate("CoupeFamilles", {
+        updateData: dataArray,
+      });
     } else {
       Alert.alert("Erreur", "Le post doit au moins contenir un titre");
     }
@@ -196,7 +184,6 @@ export default class CreerPost extends React.Component<
       { label: "AGE", value: "AGE" },
       { label: "Gazette", value: "Gazette" },
     ];
-
     return (
       <ScrollView>
         <View style={styles.mainContainer}>
@@ -268,134 +255,6 @@ export default class CreerPost extends React.Component<
               </TouchableOpacity>
             </View>
           )}
-
-          <View style={styles.checkBoxView}>
-            <CheckBox
-              center
-              title="Evenement"
-              checked={this.state.eventCheck}
-              checkedColor="#52234E"
-              onPress={() =>
-                this.setState({ eventCheck: !this.state.eventCheck })
-              }
-              containerStyle={styles.checkBox}
-            />
-          </View>
-
-          {/*Si l'utilisateur a définit le post comme un événement, on affiche les dateTimePickers*/}
-          {this.state.eventCheck == true ? (
-            <View>
-              <CheckBox
-                center
-                title="Ajouter au calendrier"
-                checked={this.state.addCalendarCheck}
-                checkedColor="#52234E"
-                onPress={() =>
-                  this.setState({
-                    addCalendarCheck: !this.state.addCalendarCheck,
-                  })
-                }
-                containerStyle={styles.checkBox}
-              />
-
-              <View style={styles.timePickerContainer}>
-                <Text style={{ width: 50 }}>Début : </Text>
-                <Text>Le</Text>
-                <DatePicker
-                  style={{ width: 150 }}
-                  date={this.state.dateDebut}
-                  mode="date"
-                  placeholder="select date"
-                  format="DD/MM/YYYY"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  customStyles={{
-                    dateInput: styles.hours,
-                    dateIcon: {
-                      width: 0,
-                    },
-                  }}
-                  onDateChange={(date) => {
-                    this.setState({ dateDebut: date });
-                  }}
-                />
-                <Text>à</Text>
-
-                <TouchableOpacity
-                  style={styles.hours}
-                  onPress={() =>
-                    this.setState({ timePickerVisibleStart: true })
-                  }
-                >
-                  <Text>{this.state.heureDebut}</Text>
-                </TouchableOpacity>
-
-                {/*Permet d'afficher le timePicker*/}
-                {this.state.timePickerVisibleStart && (
-                  <DateTimePicker
-                    mode={"time"}
-                    display="default"
-                    is24Hour={true}
-                    value={new Date()}
-                    onChange={(event, value) => {
-                      this.setState({
-                        heureDebut:
-                          value?.getHours() + ":" + value?.getMinutes(),
-                        timePickerVisibleStart: false,
-                      });
-                    }}
-                  />
-                )}
-              </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={{ width: 50 }}>Fin : </Text>
-                <Text>Le</Text>
-
-                <DatePicker
-                  style={{ width: 150 }}
-                  date={this.state.dateFin}
-                  mode="date"
-                  placeholder="select date"
-                  format="DD/MM/YYYY"
-                  confirmBtnText="Confirm"
-                  cancelBtnText="Cancel"
-                  customStyles={{
-                    dateInput: styles.hours,
-                    dateIcon: {
-                      width: 0,
-                    },
-                  }}
-                  onDateChange={(date) => {
-                    this.setState({ dateFin: date });
-                  }}
-                />
-                <Text>à</Text>
-
-                <TouchableOpacity
-                  style={styles.hours}
-                  onPress={() => this.setState({ timePickerVisibleEnd: true })}
-                >
-                  <Text>{this.state.heureFin}</Text>
-                </TouchableOpacity>
-
-                {this.state.timePickerVisibleEnd && (
-                  <DateTimePicker
-                    mode={"time"}
-                    display="default"
-                    is24Hour={true}
-                    value={new Date()}
-                    onChange={(event, value) => {
-                      this.setState({
-                        heureFin: value?.getHours() + ":" + value?.getMinutes(),
-                        timePickerVisibleEnd: false,
-                      });
-                    }}
-                  />
-                )}
-              </View>
-            </View>
-          ) : null}
-
           <TouchableOpacity
             style={styles.buttonContainer}
             onPress={this.addPost}

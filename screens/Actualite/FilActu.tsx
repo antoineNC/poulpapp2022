@@ -6,17 +6,15 @@ import { Icon } from "react-native-elements";
 import { NavigationProps } from "../../Navigation/stackNavigators";
 import { LogBox } from "react-native";
 
-
-
-export default class FilActuScreen extends Component<NavigationProps,{}>{
-  render(){
-      return(
-          <View style={styles.mainContainer}>
-              <Text style={styles.text}>
-                  Partie codée sur l'autre projet PII Poulpapp 👌
-              </Text>
-          </View>
-          )
+export default class FilActuScreen extends Component<NavigationProps, {}> {
+  render() {
+    return (
+      <View style={styles.mainContainer}>
+        <Text style={styles.text}>
+          Partie codée sur l'autre projet PII Poulpapp 👌
+        </Text>
+      </View>
+    );
   }
 }
 
@@ -25,7 +23,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: Constants.statusBarHeight,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 
   buttonCalendar: {
@@ -37,8 +35,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   text: {
-    fontWeight:"bold",
-    textAlign:"center"
+    fontWeight: "bold",
+    textAlign: "center",
   },
   calendarView: {
     flexDirection: "row",

@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   TouchableOpacity,
+  Modal,
   FlatList,
   Image,
   Text,
@@ -14,79 +15,70 @@ import {
   RootStackParamList,
 } from "../../navigation/stackNavigators";
 import { RouteProp } from "@react-navigation/core";
-import Post from "../../Services/post.model";
-
-const Data = [
-  {
-    id: "1",
-    titre: "Planet of Nature",
-    description: "description1",
-    image:
-      "https://images.unsplash.com/photo-1482822683622-00effad5052e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
-    tags: [
-      "Lorem ipsum",
-      "dolor sit amet",
-      "consectetur adipiscing elit",
-      "sed do eiusmod tempor incididunt",
-      "ut labore et dolore magna aliqua. ",
-    ],
-    editor: "bde",
-  },
-  {
-    id: "2",
-    titre: "Lampost",
-    description: "description2",
-    image:
-      "https://images.unsplash.com/photo-1482822683622-00effad5052e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
-    tags: ["tag number 1", "original tag", "tag 2"],
-    editor: "bds",
-  },
-  {
-    id: "3",
-    titre: "test 3",
-    description:
-      "lorem ipsum dolor sit amet ça ne veut rien dire mais j'ai besoin des faire des lignes et donc d'écrire à peu près n'importe quoi, j'espère que ce sera pas trop long, mdr j'ai déjà trop la flemme, d'ailleurs faut que j'aille me coucher demain je me lève tot",
-    image:
-      "https://images.unsplash.com/photo-1482822683622-00effad5052e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
-    tags: ["numero 0", "numéro 1"],
-    editor: "bdf",
-  },
-];
+import postService, { Post } from "../../Services/post.model";
+import CreerPost from "./CreerPost";
 
 interface CDFState {
   isAdmin: boolean;
   data: Array<Post>;
+  modalOpen: boolean;
 }
 
 interface CDFProps extends NavigationProps {
   route: RouteProp<RootStackParamList, "CoupeFamilles">;
 }
 
-export default class CoupeFamilles extends Component<CDFProps, {}> {
+export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
   state: CDFState = {
     isAdmin: true,
-    data: Data,
+    data: postService.posts,
+    modalOpen: false,
   };
+
+  // loadPosts = () => {
+  //   // Load all modules
+  //   postService.getAll().then((data) => {
+  //     this.setState({ data });
+  //   });
+  // };
+
+  addPost = (post: Post) => {
+    postService.add(post);
+    // this.loadPosts();
+    postService.getAll().then((data) => {
+      this.setState({ data });
+    });
+  };
+
+  removePost = (id: string) => {
+    postService.remove(id);
+    // this.loadPosts();
+  };
+
+  componentDidMount() {
+    //this.loadPosts();
+  }
 
   render() {
     return (
       <View style={styles.mainContainer}>
-        <PostListCDF
-          posts={this.state.data}
-          navigation={this.props.navigation}
-        />
+        <PostListCDF posts={this.state.data} />
         {/*Si c'est un admin, alors on affiche le bouton flottant, sinon rien (null)*/}
         {this.state.isAdmin ? (
-          <TouchableOpacity
-            onPress={() =>
-              this.props.navigation.navigate("CreerPost", {
-                data: this.state.data,
-              })
-            }
-            style={styles.floatingButton}
-          >
-            <Text style={styles.textFloatingButton}>+</Text>
-          </TouchableOpacity>
+          <View>
+            <Modal visible={this.state.modalOpen} animationType="slide">
+              <CreerPost
+                addPost={this.addPost}
+                onPressClose={() => this.setState({ modalOpen: false })}
+              />
+            </Modal>
+            <TouchableOpacity
+              onPress={() => this.setState({ modalOpen: true })}
+              style={styles.floatingButton}
+            >
+              <Text style={styles.textFloatingButton}>+</Text>
+            </TouchableOpacity>
+          </View>
         ) : null}
       </View>
     );
@@ -97,7 +89,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     marginTop: Constants.statusBarHeight,
-    alignItems: "center",
+    // alignItems: "center",
   },
 
   buttonCalendar: {

@@ -10,9 +10,9 @@ import {
 } from "react-native";
 import { NavigationProps } from "../navigation/stackNavigators";
 import PostItem from "./PostItemCDF";
-import Post from "../Services/post.model";
+import { Post } from "../Services/post.model";
 
-interface PostListProps extends NavigationProps {
+interface PostListProps {
   posts: Array<Post>;
 }
 
@@ -54,7 +54,7 @@ export default class PostListCDF extends Component<
           <View>
             <PostItem
               post={this.state.postDisplayed}
-              onPressClose={() => this.toggleModal()}
+              onPressClose={this.toggleModal}
             />
           </View>
         </Modal>

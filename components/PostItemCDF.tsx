@@ -8,16 +8,10 @@ import {
   FlatList,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { Post } from "../Services/post.model";
 
 interface PostProps {
-  post: {
-    id: string;
-    titre: string;
-    description: string;
-    tags: Array<string>;
-    image: string;
-    editor: string;
-  };
+  post: Post;
   onPressClose: () => void;
 }
 
@@ -47,7 +41,7 @@ export default class PostItemCDF extends Component<PostProps, {}> {
       <View style={styles.postContainer}>
         <TouchableOpacity
           style={styles.closeButton}
-          onPress={() => this.props.onPressClose()}
+          onPress={this.props.onPressClose}
         >
           <Icon name="window-close" color="#52234E" size={30} />
         </TouchableOpacity>
@@ -73,25 +67,6 @@ export default class PostItemCDF extends Component<PostProps, {}> {
                 )}
               />
             </View>
-
-            {/*S'il s'agit d'un événement visible sur le calendrier, on affiche les dates */}
-            {/* {this.props.post.visibleSurCalendrier == true ? (
-              <TouchableOpacity onPress={this.goToCalendar}>
-                <View style={styles.calendarView}>
-                  <Icon style={styles.calendarIcon} size={25} name="calendar" />
-                  <View>
-                    <Text style={styles.calendarText}>
-                      Du : {this.props.post.dateDebut} à{" "}
-                      {this.props.post.heureDebut}
-                    </Text>
-                    <Text style={styles.calendarText}>
-                      Au : {this.props.post.dateFin} à{" "}
-                      {this.props.post.heureFin}
-                    </Text>
-                  </View>
-                </View>
-                </TouchableOpacity>
-                ) : null} */}
           </View>
         </View>
 

@@ -5,11 +5,13 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  FlatList,
   ScrollView,
   Image,
   Alert,
 } from "react-native";
 import Constants from "expo-constants";
+import Icon from "react-native-vector-icons/FontAwesome";
 import { CheckBox } from "react-native-elements";
 import {
   NavigationProps,
@@ -20,12 +22,13 @@ import DatePicker from "react-native-datepicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import RNPickerSelect from "react-native-picker-select";
-import { FlatList } from "react-native-gesture-handler";
 import Tag from "../../components/Tag";
 
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import { Route } from "@react-navigation/native";
+import { Formik } from "formik";
+import { Post } from "../../Services/post.model";
 LogBox.ignoreAllLogs();
 
 interface CreerPostState {
@@ -33,7 +36,6 @@ interface CreerPostState {
   titre: string;
   description: string;
   tags: string;
-  eventCheck: boolean;
   addCalendarCheck: boolean;
   dateDebut: string;
   dateFin: string;
@@ -46,8 +48,9 @@ interface CreerPostState {
   editor: string;
 }
 
-interface CreerPostProps extends NavigationProps {
-  route: RouteProp<RootStackParamList, "CreerPost">;
+interface CreerPostProps {
+  addPost: (post: Post) => void;
+  onPressClose: () => void;
 }
 
 export default class CreerPost extends Component<
@@ -76,7 +79,6 @@ export default class CreerPost extends Component<
     titre: "",
     description: "",
     tags: "",
-    eventCheck: false,
     addCalendarCheck: true,
     dateDebut: this.getCurrentDate(),
     dateFin: this.getCurrentDate(),
@@ -90,34 +92,44 @@ export default class CreerPost extends Component<
   };
 
   componentDidMount() {
-    // Permet de définir l'éditeur du post selon l'utilisateur actif
-    const user = "bds";
+    // On choisit l'éditeur en dur, normalement on va chercher le current user grâce à firebase
+    const user = "bdf";
     this.setState({ editor: user });
   }
 
   addPost = () => {
-    // Vérification si le post n'est pas vide (il doit contenir au moins un titre)
-    if (this.state.titre != "") {
-      var dataArray = this.props.route.params.data;
-      // Création du post en faisant appel à firestore.Service
-      // Si c'est un événement, on transmet les propriétés correspondantes
-      if (this.state.eventCheck == true) {
-        dataArray.push({
-          id: this.state.id,
-          titre: this.state.titre,
-          description: this.state.description,
-          image: this.state.image,
-          tags: this.state.tagsList,
-          editor: this.state.editor,
-        });
-      }
-      // Une fois l'événement créé, on navigue vers l'écran du fil d'actualité
-      this.props.navigation.navigate("CoupeFamilles", {
-        updateData: dataArray,
-      });
-    } else {
-      Alert.alert("Erreur", "Le post doit au moins contenir un titre");
-    }
+    const { titre } = this.state;
+
+    if (!titre) return; // Don't submit if empty
+
+    this.setState({ id: Math.random().toString() });
+    const { id } = this.state;
+    const { description } = this.state;
+    const tags = this.state.tagsList;
+    const { image } = this.state;
+    const { editor } = this.state;
+    const post = { id, titre, description, tags, image, editor };
+
+    this.props.addPost(post);
+
+    // Reset text after submission
+    this.setState({
+      id: "",
+      titre: "",
+      description: "",
+      tags: "",
+      addCalendarCheck: true,
+      dateDebut: this.getCurrentDate(),
+      dateFin: this.getCurrentDate(),
+      heureDebut: "18:00",
+      heureFin: "20:00",
+      tagsList: [],
+      timePickerVisibleStart: false,
+      timePickerVisibleEnd: false,
+      image: "",
+      editor: "",
+    });
+    this.props.onPressClose();
   };
 
   // Permet d'ajouter un tag à la liste
@@ -186,6 +198,12 @@ export default class CreerPost extends Component<
     ];
     return (
       <ScrollView>
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={this.props.onPressClose}
+        >
+          <Icon name="window-close" color="#52234E" size={30} />
+        </TouchableOpacity>
         <View style={styles.mainContainer}>
           <View style={styles.textInput}>
             <TextInput
@@ -271,10 +289,17 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     alignItems: "center",
-    marginTop: Constants.statusBarHeight,
+    marginTop: Constants.statusBarHeight + 15,
+  },
+  closeButton: {
+    position: "absolute",
+    right: 20,
+    top: 5,
   },
   textInput: {
-    backgroundColor: "white",
+    backgroundColor: "whitesmoke",
+    borderWidth: 1,
+    borderColor: "grey",
     borderRadius: 5,
     justifyContent: "center",
     margin: 10,
@@ -296,8 +321,10 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     width: 100,
-    height: 40,
-    backgroundColor: "white",
+    height: 50,
+    backgroundColor: "whitesmoke",
+    borderWidth: 1,
+    borderColor: "grey",
     borderRadius: 5,
   },
   tagsSelected: {

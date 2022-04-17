@@ -4,11 +4,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  FlatList,
-  Image,
+  Button,
+  Alert,
   Text,
 } from "react-native";
-import Constants from "expo-constants";
 import PostListCDF from "../../components/PostList";
 import {
   NavigationProps,
@@ -21,7 +20,7 @@ import CreerPost from "./CreerPost";
 interface CDFState {
   isAdmin: boolean;
   data: Array<Post>;
-  modalOpen: boolean;
+  modalCreateOpen: boolean;
 }
 
 interface CDFProps extends NavigationProps {
@@ -32,48 +31,80 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
   state: CDFState = {
     isAdmin: true,
     data: postService.posts,
-    modalOpen: false,
+    modalCreateOpen: false,
   };
 
-  // loadPosts = () => {
-  //   // Load all modules
-  //   postService.getAll().then((data) => {
-  //     this.setState({ data });
-  //   });
-  // };
-
-  addPost = (post: Post) => {
-    postService.add(post);
-    // this.loadPosts();
+  loadPosts = () => {
+    // Load all modules
     postService.getAll().then((data) => {
       this.setState({ data });
     });
   };
 
-  removePost = (id: string) => {
-    postService.remove(id);
-    // this.loadPosts();
+  addPost = (post: Post) => {
+    postService.add(post);
+    this.loadPosts();
+  };
+
+  // Fonction appelée lors de la suppression d'un post
+  removePost = (idPost?: string) => {
+    // Une alerte s'affiche pour confirmer la suppression
+    Alert.alert(
+      "Attention",
+      "Etes-vous sûr(e) de vouloir supprimer ce post ?",
+      [
+        {
+          text: "Oui",
+          onPress: () => {
+            if (idPost) {
+              postService.remove(idPost);
+              //this.loadPosts;
+            }
+          },
+        },
+        {
+          text: "Non",
+          onPress: () => {},
+        },
+      ]
+    );
+  };
+
+  // Permet de naviguer vers l'écran de modification d'un post
+  modifPost = (post: Post) => {
+    postService.update(post);
+    this.loadPosts;
   };
 
   componentDidMount() {
-    //this.loadPosts();
+    this.loadPosts();
   }
 
   render() {
     return (
       <View style={styles.mainContainer}>
-        <PostListCDF posts={this.state.data} />
+        <Button
+          onPress={() => this.setState({ isAdmin: !this.state.isAdmin })}
+          title="Switch admin ou user"
+          color="blue"
+        />
+        <PostListCDF
+          posts={this.state.data}
+          removePost={this.removePost}
+          modifPost={this.modifPost}
+          isAdmin={this.state.isAdmin}
+        />
         {/*Si c'est un admin, alors on affiche le bouton flottant, sinon rien (null)*/}
         {this.state.isAdmin ? (
           <View>
-            <Modal visible={this.state.modalOpen} animationType="slide">
+            <Modal visible={this.state.modalCreateOpen} animationType="slide">
               <CreerPost
                 addPost={this.addPost}
-                onPressClose={() => this.setState({ modalOpen: false })}
+                onPressClose={() => this.setState({ modalCreateOpen: false })}
               />
             </Modal>
             <TouchableOpacity
-              onPress={() => this.setState({ modalOpen: true })}
+              onPress={() => this.setState({ modalCreateOpen: true })}
               style={styles.floatingButton}
             >
               <Text style={styles.textFloatingButton}>+</Text>
@@ -88,17 +119,6 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    marginTop: Constants.statusBarHeight,
-    // alignItems: "center",
-  },
-
-  buttonCalendar: {
-    margin: 20,
-    backgroundColor: "#52234E",
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    marginTop: 0,
   },
   text: {
     color: "white",
@@ -108,7 +128,6 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
   },
-
   floatingButton: {
     width: 60,
     height: 60,
@@ -127,7 +146,5 @@ const styles = StyleSheet.create({
   textFloatingButton: {
     color: "white",
     fontSize: 32,
-    marginLeft: 2,
-    marginBottom: 2,
   },
 });

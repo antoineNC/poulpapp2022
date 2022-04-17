@@ -16,11 +16,12 @@ class PostService {
       image:
         "https://images.unsplash.com/photo-1482822683622-00effad5052e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80",
       tags: [
-        "Lorem ipsum",
-        "dolor sit amet",
-        "consectetur adipiscing elit",
-        "sed do eiusmod tempor incididunt",
-        "ut labore et dolore magna aliqua. ",
+        "Evènement",
+        "Annonce",
+        "BDE",
+        "Afterwork",
+        "Soirée",
+        "Shotgun",
       ],
       editor: "bde",
     },
@@ -44,7 +45,7 @@ class PostService {
       editor: "bdf",
     },];
 
-  // Return all todos asynchronously. Returns a Promise
+  // Return all post asynchronously. Returns a Promise
   getAll(): Promise<Array<Post>> {
     return new Promise((resolve) => {
       resolve(this.posts);
@@ -52,13 +53,17 @@ class PostService {
   }
 
   add(post: Post) {
-    // Add new todo at beginning of array
+    // Add new post at beginning of array
     this.posts = [post, ...this.posts];
   }
 
   remove(id: string) {
-    // Keep only todos that don't have task as key
     this.posts = this.posts.filter((post: Post) => post.id !== id);
+  }
+
+  update(postUpdated: Post){
+    this.remove(postUpdated.id);
+    this.add(postUpdated)
   }
 }
 

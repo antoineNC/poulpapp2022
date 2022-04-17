@@ -20,9 +20,9 @@ export type RootStackParamList = {
   Inscription: undefined;
   FildActu: undefined;
   Calendrier: undefined;
-  CreerPost: { data: Array<Post> };
+  CreerPost: undefined;
   Calabar: undefined;
-  CoupeFamilles: { updateData: Array<Post> };
+  CoupeFamilles: undefined;
   Menu: undefined;
   GererMesPosts: undefined;
   Partenariats: undefined;

@@ -2,18 +2,20 @@ import React, { Component, useState } from "react";
 import {
   View,
   StyleSheet,
-  Text,
-  Image,
   FlatList,
   Modal,
   TouchableOpacity,
+  Alert,
 } from "react-native";
-import { NavigationProps } from "../navigation/stackNavigators";
+import PostDisplayed from "./PostDisplayedCDF";
 import PostItem from "./PostItemCDF";
 import { Post } from "../Services/post.model";
 
 interface PostListProps {
   posts: Array<Post>;
+  removePost: (id?: string) => void;
+  modifPost: (post: Post) => void;
+  isAdmin: boolean;
 }
 
 interface PostListState {
@@ -49,10 +51,10 @@ export default class PostListCDF extends Component<
 
   render() {
     return (
-      <View>
+      <View style={{ flex: 1 }}>
         <Modal visible={this.state.modalOpen} animationType="slide">
-          <View>
-            <PostItem
+          <View style={styles.modalView}>
+            <PostDisplayed
               post={this.state.postDisplayed}
               onPressClose={this.toggleModal}
             />
@@ -62,11 +64,12 @@ export default class PostListCDF extends Component<
           data={this.props.posts}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => this.displayPost(item)}>
-              <View style={styles.post}>
-                <Text style={styles.titre}>{item.titre}</Text>
-                <Text numberOfLines={3}>{item.description}</Text>
-                <Image source={{ uri: item.image }} style={styles.image} />
-              </View>
+              <PostItem
+                post={item}
+                removePost={this.props.removePost}
+                modifPost={this.props.modifPost}
+                isAdmin={this.props.isAdmin}
+              />
             </TouchableOpacity>
           )}
         />
@@ -76,16 +79,5 @@ export default class PostListCDF extends Component<
 }
 
 const styles = StyleSheet.create({
-  image: {
-    height: 250,
-    resizeMode: "contain",
-  },
-  titre: {
-    fontWeight: "bold",
-    textAlign: "center",
-  },
-  post: {
-    flex: 1,
-    margin: 20,
-  },
+  modalView: { flex: 1, backgroundColor: "#F0E4EF", borderRadius: 5 },
 });

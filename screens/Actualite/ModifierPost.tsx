@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  FlatList,
 } from "react-native";
 import Constants from "expo-constants";
 import firestoreService, { PostData } from "../../Services/firestore.service";
@@ -21,7 +22,6 @@ import DatePicker from "react-native-datepicker";
 import DateTimePicker from "@react-native-community/datetimepicker";
 
 import RNPickerSelect from "react-native-picker-select";
-import { FlatList } from "react-native-gesture-handler";
 import Tag from "../../Components/Tag";
 
 import * as ImagePicker from "expo-image-picker";
@@ -266,8 +266,8 @@ export default class ModifPost extends React.Component<
                 checkedColor="#52234E"
                 onPress={() => {
                   var nvPost = this.state.post;
-                  nvPost.visibleSurCalendrier = !this.state.post
-                    .visibleSurCalendrier;
+                  nvPost.visibleSurCalendrier =
+                    !this.state.post.visibleSurCalendrier;
                   this.setState({ post: nvPost });
                 }}
                 containerStyle={styles.checkBox}

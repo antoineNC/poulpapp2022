@@ -8,8 +8,8 @@ import {
   Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Post } from "../Services/post.model";
-import ModifPost from "../screens/CDF/ModifPost";
+import { Post } from "../../Services/post.model";
+import ModifPost from "./ModifPost";
 import { ScrollView } from "react-native-gesture-handler";
 
 interface PostItemProps {
@@ -31,15 +31,15 @@ export default class PostItem extends Component<PostItemProps, PostItemState> {
   // Permet de récupérer le chemin d'accès de l'image associé à l'association qui a créé le post
   getImagePath = () => {
     if (this.props.post.editor == "bde") {
-      return require("../Image/bde.png");
+      return require("../../Image/bde.png");
     } else if (this.props.post.editor == "bds") {
-      return require("../Image/bds.png");
+      return require("../../Image/bds.png");
     } else if (this.props.post.editor == "bda") {
-      return require("../Image/bda.png");
+      return require("../../Image/bda.png");
     } else if (this.props.post.editor == "bdf") {
-      return require("../Image/bdf.png");
+      return require("../../Image/bdf.png");
     } else if (this.props.post.editor == "je") {
-      return require("../Image/je.png");
+      return require("../../Image/je.png");
     }
   };
 
@@ -152,6 +152,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     textAlign: "left",
+    alignSelf: "center",
   },
   optionButtons: {
     flex: 1,

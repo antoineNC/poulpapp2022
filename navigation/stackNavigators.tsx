@@ -4,23 +4,19 @@ import {
   StackNavigationOptions,
   StackNavigationProp,
 } from "@react-navigation/stack";
-import { TouchableOpacity, StyleSheet } from "react-native";
-import { Icon } from "react-native-elements";
-import Post from "../Services/post.model";
+import { StyleSheet } from "react-native";
 import FilActu from "../screens/Actualite/FilActu";
-import Calendrier from "../screens/Actualite/Calendrier";
-import CreerPost from "../screens/CDF/CreerPost";
-import ModifPost from "../screens/Actualite/ModifierPost";
 import Calabar from "../screens/Calabar";
 import CoupeFamilles from "../screens/CDF/CoupeFamilles";
 import Menu from "../screens/Menu";
+import PointsFamille from "../screens/CDF/PointsFamille";
 
 export type RootStackParamList = {
   Connexion: undefined;
   Inscription: undefined;
   FildActu: undefined;
   Calendrier: undefined;
-  CreerPost: undefined;
+  PointsFamille: { isAdmin: boolean };
   Calabar: undefined;
   CoupeFamilles: undefined;
   Menu: undefined;
@@ -68,14 +64,6 @@ export const CalabarStackScreen = () => {
         options={({ navigation }) => ({
           headerLeft: () => null,
           headerRight: () => null,
-          // (
-          //   <TouchableOpacity
-          //     onPress={() => deconnexion(navigation)}
-          //     style={styles.quitButton}
-          //   >
-          //     <Icon name="sign-out" type="font-awesome" color="#52234E" />
-          //   </TouchableOpacity>
-          // ),
         })}
       />
     </CalabarStack.Navigator>
@@ -93,26 +81,13 @@ export const CoupeFamillesStackScreen = () => {
           title: "Coupe des familles",
           headerLeft: () => null,
           headerRight: () => null,
-          // (
-          //   <TouchableOpacity
-          //     onPress={() => deconnexion(navigation)}
-          //     style={styles.quitButton}
-          //   >
-          //     <Icon name="sign-out" type="font-awesome" color="#52234E" />
-          //   </TouchableOpacity>
-          // ),
         })}
       />
       <CoupeFamillesStack.Screen
-        name="CreerPost"
-        options={{ title: "Créer un post" }}
-        component={CreerPost}
+        name="PointsFamille"
+        options={() => ({ title: "Les points de Famille" })}
+        component={PointsFamille}
       />
-      {/* <CoupeFamillesStack.Screen
-        name="ModifPost"
-        options={{ title: "Modifier un post" }}
-        component={ModifPost}
-      /> */}
     </CoupeFamillesStack.Navigator>
   );
 };
@@ -132,13 +107,3 @@ export const MenuStackScreen = () => {
     </MenuStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  quitButton: {
-    margin: 10,
-    width: 50,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-});

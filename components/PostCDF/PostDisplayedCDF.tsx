@@ -8,7 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Post } from "../Services/post.model";
+import { Post } from "../../Services/post.model";
 
 interface PostProps {
   post: Post;
@@ -19,15 +19,15 @@ export default class PostDisplayedCDF extends Component<PostProps, {}> {
   // Permet de récupérer le chemin d'accès de l'image associé à l'association qui a créé le post
   getImagePath = () => {
     if (this.props.post.editor == "bde") {
-      return require("../Image/bde.png");
+      return require("../../Image/bde.png");
     } else if (this.props.post.editor == "bds") {
-      return require("../Image/bds.png");
+      return require("../../Image/bds.png");
     } else if (this.props.post.editor == "bda") {
-      return require("../Image/bda.png");
+      return require("../../Image/bda.png");
     } else if (this.props.post.editor == "bdf") {
-      return require("../Image/bdf.png");
+      return require("../../Image/bdf.png");
     } else if (this.props.post.editor == "je") {
-      return require("../Image/je.png");
+      return require("../../Image/je.png");
     }
   };
 
@@ -78,28 +78,6 @@ export default class PostDisplayedCDF extends Component<PostProps, {}> {
         {this.props.post.image != "" ? (
           <Image source={{ uri: this.props.post.image }} style={styles.image} />
         ) : null}
-
-        {/*Si l'utilisateur est le créateur du post, alors on affiche les boutons de suppression et modification */}
-
-        {/* <View style={{ flexDirection: "row" }}>
-          <TouchableOpacity
-            onPress={() => this.props.removePost(this.props.post.id)}
-            style={styles.appButtonContainer}
-          >
-            <Icon style={{ margin: 10 }} size={20} name="trash" color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => this.props.modifPost(this.props.post)}
-            style={styles.appButtonContainer}
-          >
-            <Icon
-              style={{ margin: 10 }}
-              size={20}
-              name="pencil"
-              color="white"
-            />
-          </TouchableOpacity>
-        </View> */}
       </View>
     );
   }
@@ -112,6 +90,9 @@ const styles = StyleSheet.create({
     paddingTop: 5,
     margin: 7,
     paddingBottom: 10,
+    flex: 1,
+    backgroundColor: "#F0E4EF",
+    borderRadius: 5,
   },
   closeButton: {
     position: "absolute",

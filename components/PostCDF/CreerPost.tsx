@@ -1,37 +1,49 @@
-import React, { useState, Component } from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  FlatList,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Constants from "expo-constants";
 import RNPickerSelect from "react-native-picker-select";
-import { FlatList } from "react-native-gesture-handler";
-import Tag from "../../components/Tag";
+import Tag from "./Tag";
 
 import * as ImagePicker from "expo-image-picker";
+import { LogBox } from "react-native";
 import { Post } from "../../Services/post.model";
+LogBox.ignoreAllLogs();
 
-interface ModifPostState {
-  post: Post;
+interface CreerPostState {
+  id: string;
+  titre: string;
+  description: string;
+  tags: string;
+  addCalendarCheck: boolean;
+  dateDebut: string;
+  dateFin: string;
+  heureDebut: string;
+  heureFin: string;
+  tagsList: Array<string>;
   timePickerVisibleStart: boolean;
   timePickerVisibleEnd: boolean;
+  image: any;
+  editor: string;
 }
 
-interface ModifPostProps {
-  updatePost: (post: Post) => void;
-  postToUpdate: Post;
+interface CreerPostProps {
+  addPost: (post: Post) => void;
   onPressClose: () => void;
 }
 
-export default class ModifPost extends Component<
-  ModifPostProps,
-  ModifPostState
+export default class CreerPost extends Component<
+  CreerPostProps,
+  CreerPostState
 > {
   // Permet de récupérer la date d'aujourd'hui, pour afficher la valeur par défaut dans le dateTimePicker
   getCurrentDate = () => {
@@ -39,49 +51,92 @@ export default class ModifPost extends Component<
     var month = new Date().getMonth() + 1;
     var year = new Date().getFullYear();
     var today =
-      year +
-      "-" +
+      (date < 10 ? "0" : "") +
+      date +
+      "/" +
       (month < 10 ? "0" : "") +
       month +
-      "-" +
-      (date < 10 ? "0" : "") +
-      date;
+      "/" +
+      year;
+
     return today;
   };
 
-  // Chaque champ est initialisé avec les données du post à modifier
-  state: ModifPostState = {
-    post: this.props.postToUpdate,
+  state: CreerPostState = {
+    id: "",
+    titre: "",
+    description: "",
+    tags: "",
+    addCalendarCheck: true,
+    dateDebut: this.getCurrentDate(),
+    dateFin: this.getCurrentDate(),
+    heureDebut: "18:00",
+    heureFin: "20:00",
+    tagsList: [],
     timePickerVisibleStart: false,
     timePickerVisibleEnd: false,
+    image: "",
+    editor: "",
   };
 
-  updatePost = () => {
-    this.props.updatePost(this.state.post);
+  componentDidMount() {
+    // On choisit l'éditeur en dur, normalement on va chercher le current user grâce à firebase
+    const user = "bdf";
+    this.setState({ editor: user });
+  }
+
+  addPost = () => {
+    const { titre } = this.state;
+
+    if (!titre) return; // Don't submit if empty
+
+    this.setState({ id: Math.random().toString() });
+    const { id } = this.state;
+    const { description } = this.state;
+    const tags = this.state.tagsList;
+    const { image } = this.state;
+    const { editor } = this.state;
+    const post = { id, titre, description, tags, image, editor };
+
+    this.props.addPost(post);
+
+    // Reset text after submission
+    this.setState({
+      id: "",
+      titre: "",
+      description: "",
+      tags: "",
+      addCalendarCheck: true,
+      dateDebut: this.getCurrentDate(),
+      dateFin: this.getCurrentDate(),
+      heureDebut: "18:00",
+      heureFin: "20:00",
+      tagsList: [],
+      timePickerVisibleStart: false,
+      timePickerVisibleEnd: false,
+      image: "",
+      editor: "",
+    });
     this.props.onPressClose();
   };
 
   // Permet d'ajouter un tag à la liste
   addTag = (tag: string) => {
     if (!this.checkTag(tag)) {
-      var nvPost = this.state.post;
-      nvPost.tags = [...this.state.post.tags, tag];
-      this.setState({ post: nvPost });
+      this.setState({ tagsList: [...this.state.tagsList, tag] });
     }
   };
 
   // Permet de supprimer un tag de la liste
   removeTag = (tagDelete: string) => {
-    var nvPost = this.state.post;
-    nvPost.tags = this.state.post.tags.filter(
-      (tag: string) => tag !== tagDelete
-    );
-    this.setState({ post: nvPost });
+    this.setState({
+      tagsList: this.state.tagsList.filter((tag: string) => tag !== tagDelete),
+    });
   };
 
   // Vérifie si le tag ajouté n'existe pas déjà dans la liste
   checkTag = (tag: string) => {
-    const arr = this.state.post.tags;
+    const arr = this.state.tagsList;
     if (arr != null && arr.length > 0) {
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] == tag) {
@@ -104,17 +159,13 @@ export default class ModifPost extends Component<
     });
 
     if (!result.cancelled) {
-      var nvPost = this.state.post;
-      nvPost.image = result.uri;
-      this.setState({ post: nvPost });
+      this.setState({ image: result.uri });
     }
   };
 
   // Permet de supprimer l'image choisie (le chemin d'accès vaut "")
   deleteImage = () => {
-    var nvPost = this.state.post;
-    nvPost.image = "";
-    this.setState({ post: nvPost });
+    this.setState({ image: "" });
   };
 
   render() {
@@ -133,7 +184,6 @@ export default class ModifPost extends Component<
       { label: "AGE", value: "AGE" },
       { label: "Gazette", value: "Gazette" },
     ];
-
     return (
       <View style={styles.mainContainer}>
         <View style={styles.header}>
@@ -149,26 +199,17 @@ export default class ModifPost extends Component<
           <View style={styles.form}>
             <View style={styles.textInput}>
               <TextInput
-                value={this.state.post.titre}
+                placeholder="Titre"
                 style={{ width: 300, fontSize: 15 }}
-                onChangeText={(text) => {
-                  var nvPost = this.state.post;
-                  nvPost.titre = text;
-                  this.setState({ post: nvPost });
-                }}
+                onChangeText={(text) => this.setState({ titre: text })}
               />
             </View>
-
             <View style={[styles.textInput, styles.textInputDescription]}>
               <TextInput
-                value={this.state.post.description}
+                placeholder="Description"
                 multiline={true}
                 style={styles.descriptionText}
-                onChangeText={(text) => {
-                  var nvPost = this.state.post;
-                  nvPost.description = text;
-                  this.setState({ post: nvPost });
-                }}
+                onChangeText={(text) => this.setState({ description: text })}
               />
             </View>
 
@@ -186,7 +227,7 @@ export default class ModifPost extends Component<
 
             <FlatList<string>
               contentContainerStyle={styles.tagsSelected}
-              data={this.state.post.tags}
+              data={this.state.tagsList}
               keyExtractor={(tag) => tag}
               renderItem={({ item }: { item: string }) => (
                 <Tag tag={item} removeTag={this.removeTag} />
@@ -195,12 +236,9 @@ export default class ModifPost extends Component<
           </View>
 
           {/*Si une image est sélectionnée, on l'affiche, et les boutons de supression et modification d'image apparaissent */}
-          {this.state.post.image != "" ? (
+          {this.state.image != "" ? (
             <View style={styles.imageView}>
-              <Image
-                source={{ uri: this.state.post.image }}
-                style={styles.image}
-              />
+              <Image source={{ uri: this.state.image }} style={styles.image} />
               <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
                   style={styles.buttonImage}
@@ -230,9 +268,9 @@ export default class ModifPost extends Component<
           <View>
             <TouchableOpacity
               style={styles.buttonContainer}
-              onPress={this.updatePost}
+              onPress={this.addPost}
             >
-              <Text style={styles.addBtnText}>Modifier le post</Text>
+              <Text style={styles.addBtnText}>Publier le post</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
@@ -338,6 +376,7 @@ const styles = StyleSheet.create({
   },
 });
 
+// Styles spécifiques pour les dateTimePicker
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
     height: 30,
@@ -348,7 +387,7 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: "blue",
     borderRadius: 4,
     color: "black",
-    paddingRight: 30, // to ensure the text is never behind the icon
+    paddingRight: 30,
   },
   inputAndroid: {
     height: 40,
@@ -359,6 +398,6 @@ const pickerSelectStyles = StyleSheet.create({
     borderColor: "purple",
     borderRadius: 8,
     color: "black",
-    paddingRight: 30, // to ensure the text is never behind the icon
+    paddingRight: 30,
   },
 });

@@ -8,14 +8,15 @@ import {
   Alert,
   Text,
 } from "react-native";
-import PostListCDF from "../../components/PostList";
 import {
   NavigationProps,
   RootStackParamList,
 } from "../../navigation/stackNavigators";
 import { RouteProp } from "@react-navigation/core";
+import Icon from "react-native-vector-icons/Entypo";
 import postService, { Post } from "../../Services/post.model";
-import CreerPost from "./CreerPost";
+import PostListCDF from "../../components/PostCDF/PostList";
+import CreerPost from "../../components/PostCDF/CreerPost";
 
 interface CDFState {
   isAdmin: boolean;
@@ -58,7 +59,7 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
           onPress: () => {
             if (idPost) {
               postService.remove(idPost);
-              //this.loadPosts;
+              this.loadPosts;
             }
           },
         },
@@ -83,7 +84,7 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
   render() {
     return (
       <View style={styles.mainContainer}>
-        <Button
+        <Button //Normalement, être admin est une caractéristique du l'utilisateur
           onPress={() => this.setState({ isAdmin: !this.state.isAdmin })}
           title="Switch admin ou user"
           color="blue"
@@ -94,6 +95,16 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
           modifPost={this.modifPost}
           isAdmin={this.state.isAdmin}
         />
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate("PointsFamille", {
+              isAdmin: this.state.isAdmin,
+            })
+          }
+          style={styles.pointButton}
+        >
+          <Icon name="bar-graph" color={"white"} size={25} />
+        </TouchableOpacity>
         {/*Si c'est un admin, alors on affiche le bouton flottant, sinon rien (null)*/}
         {this.state.isAdmin ? (
           <View>
@@ -105,7 +116,7 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
             </Modal>
             <TouchableOpacity
               onPress={() => this.setState({ modalCreateOpen: true })}
-              style={styles.floatingButton}
+              style={styles.addButton}
             >
               <Text style={styles.textFloatingButton}>+</Text>
             </TouchableOpacity>
@@ -128,13 +139,28 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
   },
-  floatingButton: {
+  addButton: {
     width: 60,
     height: 60,
     backgroundColor: "#52234E",
     position: "absolute",
-    bottom: 30,
+    bottom: 20,
     right: 30,
+    borderRadius: 40,
+    shadowColor: "#000",
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  pointButton: {
+    width: 60,
+    height: 60,
+    backgroundColor: "#52234E",
+    position: "absolute",
+    bottom: 20,
+    left: 30,
     borderRadius: 40,
     shadowColor: "#000",
     shadowOffset: { width: 2, height: 2 },
@@ -145,6 +171,6 @@ const styles = StyleSheet.create({
   },
   textFloatingButton: {
     color: "white",
-    fontSize: 32,
+    fontSize: 40,
   },
 });

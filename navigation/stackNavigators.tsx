@@ -1,36 +1,20 @@
-import React from "react";
 import {
   createStackNavigator,
   StackNavigationOptions,
   StackNavigationProp,
 } from "@react-navigation/stack";
-import { TouchableOpacity, StyleSheet } from "react-native";
-import { Icon } from "react-native-elements";
-import Post from "../Services/post.model";
 import FilActu from "../screens/Actualite/FilActu";
-import Calendrier from "../screens/Actualite/Calendrier";
-import CreerPost from "../screens/CDF/CreerPost";
-import ModifPost from "../screens/Actualite/ModifierPost";
 import Calabar from "../screens/Calabar";
 import CoupeFamilles from "../screens/CDF/CoupeFamilles";
 import Menu from "../screens/Menu";
+import PointsFamille from "../screens/CDF/PointsFamille";
 
 export type RootStackParamList = {
-  Connexion: undefined;
-  Inscription: undefined;
-  FildActu: undefined;
-  Calendrier: undefined;
-  CreerPost: undefined;
+  FilActu: undefined;
+  PointsFamille: { isAdmin: boolean };
   Calabar: undefined;
   CoupeFamilles: undefined;
   Menu: undefined;
-  GererMesPosts: undefined;
-  Partenariats: undefined;
-  Asso: undefined;
-  CartesAdhesions: undefined;
-  Clubs: undefined;
-  Parametres: undefined;
-  BoiteQuestions: undefined;
 };
 
 export interface NavigationProps {
@@ -42,16 +26,15 @@ const stackScreenOptions: StackNavigationOptions = {
 };
 
 const FilActuStack = createStackNavigator<RootStackParamList>();
-export const FilActuStackNavigator = () => {
+export const FilActuStackScreen = () => {
   return (
     <FilActuStack.Navigator screenOptions={stackScreenOptions}>
       <FilActuStack.Screen
-        name="FildActu"
+        name="FilActu"
         component={FilActu}
         options={({ navigation }) => ({
           title: "Fil d'actualité",
-          headerLeft: () => null,
-          headerRight: () => null,
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
     </FilActuStack.Navigator>
@@ -66,16 +49,7 @@ export const CalabarStackScreen = () => {
         name="Calabar"
         component={Calabar}
         options={({ navigation }) => ({
-          headerLeft: () => null,
-          headerRight: () => null,
-          // (
-          //   <TouchableOpacity
-          //     onPress={() => deconnexion(navigation)}
-          //     style={styles.quitButton}
-          //   >
-          //     <Icon name="sign-out" type="font-awesome" color="#52234E" />
-          //   </TouchableOpacity>
-          // ),
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
     </CalabarStack.Navigator>
@@ -83,7 +57,7 @@ export const CalabarStackScreen = () => {
 };
 
 const CoupeFamillesStack = createStackNavigator<RootStackParamList>();
-export const CoupeFamillesStackScreen = () => {
+export const CDFStackNavigator = () => {
   return (
     <CoupeFamillesStack.Navigator screenOptions={stackScreenOptions}>
       <CoupeFamillesStack.Screen
@@ -91,28 +65,17 @@ export const CoupeFamillesStackScreen = () => {
         component={CoupeFamilles}
         options={({ navigation }) => ({
           title: "Coupe des familles",
-          headerLeft: () => null,
-          headerRight: () => null,
-          // (
-          //   <TouchableOpacity
-          //     onPress={() => deconnexion(navigation)}
-          //     style={styles.quitButton}
-          //   >
-          //     <Icon name="sign-out" type="font-awesome" color="#52234E" />
-          //   </TouchableOpacity>
-          // ),
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
       <CoupeFamillesStack.Screen
-        name="CreerPost"
-        options={{ title: "Créer un post" }}
-        component={CreerPost}
+        name="PointsFamille"
+        options={{
+          title: "Les points de Famille",
+          headerStyle: { backgroundColor: "#F0E4EF" },
+        }}
+        component={PointsFamille}
       />
-      {/* <CoupeFamillesStack.Screen
-        name="ModifPost"
-        options={{ title: "Modifier un post" }}
-        component={ModifPost}
-      /> */}
     </CoupeFamillesStack.Navigator>
   );
 };
@@ -132,13 +95,3 @@ export const MenuStackScreen = () => {
     </MenuStack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  quitButton: {
-    margin: 10,
-    width: 50,
-    borderRadius: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-  },
-});

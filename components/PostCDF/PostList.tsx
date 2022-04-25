@@ -8,14 +8,14 @@ import {
   Alert,
 } from "react-native";
 import PostDisplayed from "./PostDisplayedCDF";
-import PostItem from "./PostItemCDF";
-import { Post } from "../Services/post.model";
+import PostItemCDF from "./PostItemCDF";
+import { Post } from "../../services/post.model";
 
 interface PostListProps {
   posts: Array<Post>;
+  isAdmin: boolean;
   removePost: (id?: string) => void;
   modifPost: (post: Post) => void;
-  isAdmin: boolean;
 }
 
 interface PostListState {
@@ -53,7 +53,7 @@ export default class PostListCDF extends Component<
     return (
       <View style={{ flex: 1 }}>
         <Modal visible={this.state.modalOpen} animationType="slide">
-          <View style={styles.modalView}>
+          <View style={{ flex: 1 }}>
             <PostDisplayed
               post={this.state.postDisplayed}
               onPressClose={this.toggleModal}
@@ -64,7 +64,7 @@ export default class PostListCDF extends Component<
           data={this.props.posts}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => this.displayPost(item)}>
-              <PostItem
+              <PostItemCDF
                 post={item}
                 removePost={this.props.removePost}
                 modifPost={this.props.modifPost}
@@ -77,7 +77,3 @@ export default class PostListCDF extends Component<
     );
   }
 }
-
-const styles = StyleSheet.create({
-  modalView: { flex: 1, backgroundColor: "#F0E4EF", borderRadius: 5 },
-});

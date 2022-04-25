@@ -2,11 +2,11 @@ export interface Event {
     id: string;
     titre: string;
     date: string
-    bleu: number;
-    jaune: number;
-    orange: number;
-    rouge: number;
-    vert: number;
+    bleu: string;
+    jaune: string;
+    orange: string;
+    rouge: string;
+    vert: string;
   }
   
   class EventService {
@@ -15,11 +15,11 @@ export interface Event {
         id: "1",
         titre: "Blind test",
         date: "04/03/2022",
-        bleu: 0,
-        jaune:0,
-        orange:0,
-        rouge:0,
-        vert:0,
+        bleu: "10",
+        jaune:"4",
+        orange:"15",
+        rouge:"13",
+        vert:"11",
       },
     ]
   

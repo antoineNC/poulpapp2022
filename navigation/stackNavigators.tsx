@@ -1,10 +1,8 @@
-import React from "react";
 import {
   createStackNavigator,
   StackNavigationOptions,
   StackNavigationProp,
 } from "@react-navigation/stack";
-import { StyleSheet } from "react-native";
 import FilActu from "../screens/Actualite/FilActu";
 import Calabar from "../screens/Calabar";
 import CoupeFamilles from "../screens/CDF/CoupeFamilles";
@@ -12,21 +10,11 @@ import Menu from "../screens/Menu";
 import PointsFamille from "../screens/CDF/PointsFamille";
 
 export type RootStackParamList = {
-  Connexion: undefined;
-  Inscription: undefined;
-  FildActu: undefined;
-  Calendrier: undefined;
+  FilActu: undefined;
   PointsFamille: { isAdmin: boolean };
   Calabar: undefined;
   CoupeFamilles: undefined;
   Menu: undefined;
-  GererMesPosts: undefined;
-  Partenariats: undefined;
-  Asso: undefined;
-  CartesAdhesions: undefined;
-  Clubs: undefined;
-  Parametres: undefined;
-  BoiteQuestions: undefined;
 };
 
 export interface NavigationProps {
@@ -38,16 +26,15 @@ const stackScreenOptions: StackNavigationOptions = {
 };
 
 const FilActuStack = createStackNavigator<RootStackParamList>();
-export const FilActuStackNavigator = () => {
+export const FilActuStackScreen = () => {
   return (
     <FilActuStack.Navigator screenOptions={stackScreenOptions}>
       <FilActuStack.Screen
-        name="FildActu"
+        name="FilActu"
         component={FilActu}
         options={({ navigation }) => ({
           title: "Fil d'actualité",
-          headerLeft: () => null,
-          headerRight: () => null,
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
     </FilActuStack.Navigator>
@@ -62,8 +49,7 @@ export const CalabarStackScreen = () => {
         name="Calabar"
         component={Calabar}
         options={({ navigation }) => ({
-          headerLeft: () => null,
-          headerRight: () => null,
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
     </CalabarStack.Navigator>
@@ -71,7 +57,7 @@ export const CalabarStackScreen = () => {
 };
 
 const CoupeFamillesStack = createStackNavigator<RootStackParamList>();
-export const CoupeFamillesStackScreen = () => {
+export const CDFStackNavigator = () => {
   return (
     <CoupeFamillesStack.Navigator screenOptions={stackScreenOptions}>
       <CoupeFamillesStack.Screen
@@ -79,13 +65,15 @@ export const CoupeFamillesStackScreen = () => {
         component={CoupeFamilles}
         options={({ navigation }) => ({
           title: "Coupe des familles",
-          headerLeft: () => null,
-          headerRight: () => null,
+          headerStyle: { backgroundColor: "#F0E4EF" },
         })}
       />
       <CoupeFamillesStack.Screen
         name="PointsFamille"
-        options={() => ({ title: "Les points de Famille" })}
+        options={{
+          title: "Les points de Famille",
+          headerStyle: { backgroundColor: "#F0E4EF" },
+        }}
         component={PointsFamille}
       />
     </CoupeFamillesStack.Navigator>

@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import PostDisplayed from "./PostDisplayedCDF";
 import PostItemCDF from "./PostItemCDF";
-import { Post } from "../../Services/post.model";
+import { Post } from "../../services/post.model";
 
 interface PostListProps {
   posts: Array<Post>;
@@ -53,7 +53,7 @@ export default class PostListCDF extends Component<
     return (
       <View style={{ flex: 1 }}>
         <Modal visible={this.state.modalOpen} animationType="slide">
-          <View>
+          <View style={{ flex: 1 }}>
             <PostDisplayed
               post={this.state.postDisplayed}
               onPressClose={this.toggleModal}

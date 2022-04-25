@@ -8,13 +8,13 @@ import {
   Modal,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Post } from "../../Services/post.model";
+import { Post } from "../../services/post.model";
 import ModifPost from "./ModifPost";
 import { ScrollView } from "react-native-gesture-handler";
 
 interface PostItemProps {
   post: Post;
-  removePost: (id?: string) => void;
+  removePost: (id: string) => void;
   modifPost: (post: Post) => void;
   isAdmin: boolean;
 }

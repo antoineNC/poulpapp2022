@@ -1,36 +1,30 @@
-import React from "react";
-import {
-  BottomTabBarProps,
-  createBottomTabNavigator,
-} from "@react-navigation/bottom-tabs";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Icon } from "react-native-elements";
 
 import {
   RootStackParamList,
-  FilActuStackNavigator,
+  FilActuStackScreen,
   CalabarStackScreen,
-  CoupeFamillesStackScreen,
+  CDFStackNavigator,
   MenuStackScreen,
 } from "./stackNavigators";
-
-const getTabBarIcon = () => {
-  return <Icon name="sign-out" type="font-awesome" color="#52234E" />;
-};
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 export const TabNavigator = () => (
   <Tab.Navigator
     screenOptions={{
+      headerShown: false,
       tabBarActiveTintColor: "white",
       tabBarActiveBackgroundColor: "#52234E",
       tabBarInactiveTintColor: "gray",
       tabBarLabelStyle: {
-      fontSize: 10,},
+        fontSize: 10,
+      },
     }}
   >
     <Tab.Screen
-      name="FildActu"
-      component={FilActuStackNavigator}
+      name="FilActu"
+      component={FilActuStackScreen}
       options={{
         tabBarLabel: "Fil d'actualité",
         tabBarIcon: (props) => (
@@ -59,7 +53,7 @@ export const TabNavigator = () => (
     />
     <Tab.Screen
       name="CoupeFamilles"
-      component={CoupeFamillesStackScreen}
+      component={CDFStackNavigator}
       options={{
         tabBarLabel: "Coupe des familles",
         tabBarIcon: (props) => (

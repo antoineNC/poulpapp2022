@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import DatePicker from "react-native-datepicker";
-import { Event } from "../../Services/event.model";
+import { Event } from "../../services/event.model";
 
 interface CreerEventState {
   id: string;

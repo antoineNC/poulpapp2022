@@ -16,7 +16,7 @@ import Tag from "./Tag";
 
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
-import { Post } from "../../Services/post.model";
+import { Post } from "../../services/post.model";
 LogBox.ignoreAllLogs();
 
 interface CreerPostState {
@@ -24,14 +24,7 @@ interface CreerPostState {
   titre: string;
   description: string;
   tags: string;
-  addCalendarCheck: boolean;
-  dateDebut: string;
-  dateFin: string;
-  heureDebut: string;
-  heureFin: string;
   tagsList: Array<string>;
-  timePickerVisibleStart: boolean;
-  timePickerVisibleEnd: boolean;
   image: any;
   editor: string;
 }
@@ -67,14 +60,7 @@ export default class CreerPost extends Component<
     titre: "",
     description: "",
     tags: "",
-    addCalendarCheck: true,
-    dateDebut: this.getCurrentDate(),
-    dateFin: this.getCurrentDate(),
-    heureDebut: "18:00",
-    heureFin: "20:00",
     tagsList: [],
-    timePickerVisibleStart: false,
-    timePickerVisibleEnd: false,
     image: "",
     editor: "",
   };
@@ -106,14 +92,7 @@ export default class CreerPost extends Component<
       titre: "",
       description: "",
       tags: "",
-      addCalendarCheck: true,
-      dateDebut: this.getCurrentDate(),
-      dateFin: this.getCurrentDate(),
-      heureDebut: "18:00",
-      heureFin: "20:00",
       tagsList: [],
-      timePickerVisibleStart: false,
-      timePickerVisibleEnd: false,
       image: "",
       editor: "",
     });

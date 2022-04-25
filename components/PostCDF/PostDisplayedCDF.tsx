@@ -7,8 +7,9 @@ import {
   Text,
   FlatList,
 } from "react-native";
+import { ScrollView } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { Post } from "../../Services/post.model";
+import { Post } from "../../services/post.model";
 
 interface PostProps {
   post: Post;
@@ -30,78 +31,75 @@ export default class PostDisplayedCDF extends Component<PostProps, {}> {
       return require("../../Image/je.png");
     }
   };
-
-  // Permet de naviguer vers l'écran du calendrier
-  //   goToCalendar = () => {
-  //     this.props.onPressClose(); // Permet de fermer le modal
-  //     this.props.navigation.navigate("Calendrier");
-  //   };
   render() {
     return (
-      <View style={styles.postContainer}>
+      <View style={styles.container}>
         <TouchableOpacity
           style={styles.closeButton}
           onPress={this.props.onPressClose}
         >
           <Icon name="window-close" color="#52234E" size={30} />
         </TouchableOpacity>
-
-        <View style={styles.headerContainer}>
-          <View>
-            <Image source={this.getImagePath()} style={styles.logo} />
-          </View>
-
-          <View style={{ flexDirection: "column" }}>
-            <View style={styles.titreContainer}>
-              <Text style={styles.titreText}>{this.props.post.titre}</Text>
+        <ScrollView>
+          <View style={styles.postContainer}>
+            <View style={styles.headerContainer}>
+              <View style={styles.logoContainer}>
+                <Image source={this.getImagePath()} style={styles.logo} />
+              </View>
+              <View style={styles.infoContainer}>
+                <View style={styles.titreContainer}>
+                  <Text style={styles.titreText}>{this.props.post.titre}</Text>
+                </View>
+                <View style={styles.listTags}>
+                  {this.props.post.tags.map((item) => (
+                    <Text>[{item}] </Text>
+                  ))}
+                </View>
+              </View>
             </View>
 
-            {/*Affichage de la liste de tags */}
-            <View style={{ flexDirection: "row" }}>
-              <FlatList
-                style={{ flexDirection: "row" }}
-                data={this.props.post.tags}
-                keyExtractor={(tag) => tag}
-                renderItem={({ item }: { item: string }) => (
-                  <Text> [{item}] </Text>
-                )}
-              />
+            <View style={styles.descriptionContainer}>
+              <Text>{this.props.post.description}</Text>
             </View>
+
+            {/*Si le post contient une image, on l'affiche */}
+            {this.props.post.image != "" ? (
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{ uri: this.props.post.image }}
+                  style={styles.image}
+                />
+              </View>
+            ) : null}
           </View>
-        </View>
-
-        <View style={styles.descriptionContainer}>
-          <Text>{this.props.post.description}</Text>
-        </View>
-
-        {/*Si le post contient une image, on l'affiche */}
-        {this.props.post.image != "" ? (
-          <Image source={{ uri: this.props.post.image }} style={styles.image} />
-        ) : null}
+        </ScrollView>
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-  postContainer: {
-    textAlign: "center",
-    alignItems: "center",
-    paddingTop: 5,
-    margin: 7,
-    paddingBottom: 10,
-    flex: 1,
-    backgroundColor: "#F0E4EF",
-    borderRadius: 5,
-  },
+  container: { flex: 1, margin: 6 },
   closeButton: {
-    position: "absolute",
-    right: 7,
-    top: 5,
+    alignSelf: "flex-end",
+    marginRight: 5,
+    marginBottom: 5,
+  },
+  postContainer: {
+    borderWidth: 2,
+    borderColor: "#52234E",
+    borderRadius: 10,
+    paddingTop: 5,
+    paddingBottom: 10,
+    paddingHorizontal: 5,
+    backgroundColor: "#F0E4EF",
   },
   headerContainer: {
-    width: "95%",
+    flexBasis: 100,
     flexDirection: "row",
+  },
+  logoContainer: {
+    flex: 1,
   },
   logo: {
     height: 60,
@@ -110,44 +108,30 @@ const styles = StyleSheet.create({
     margin: 3,
     marginRight: 8,
   },
-  titreContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: 280,
-    height: 30,
+  infoContainer: {
+    flex: 4,
+    padding: 2,
   },
+  titreContainer: { flex: 1 },
   titreText: {
     fontSize: 20,
     fontWeight: "bold",
-    textAlign: "center",
   },
-  calendarView: {
+  listTags: {
     flexDirection: "row",
-    marginTop: 7,
-    alignItems: "center",
-  },
-  calendarIcon: {
-    marginRight: 10,
-    color: "#349CA8",
-  },
-  calendarText: {
-    color: "#349CA8",
-    fontStyle: "italic",
+    flexWrap: "wrap",
+    flex: 3,
   },
   descriptionContainer: {
-    padding: 10,
-    width: "100%",
+    paddingHorizontal: 25,
+    paddingVertical: 10,
     justifyContent: "flex-start",
+  },
+  imageContainer: {
+    alignItems: "center",
   },
   image: {
     width: 300,
     height: 300,
-  },
-  appButtonContainer: {
-    margin: 20,
-    backgroundColor: "#52234E",
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
   },
 });

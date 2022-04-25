@@ -4,7 +4,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Modal,
-  Button,
+  Switch,
   Alert,
   Text,
 } from "react-native";
@@ -14,9 +14,12 @@ import {
 } from "../../navigation/stackNavigators";
 import { RouteProp } from "@react-navigation/core";
 import Icon from "react-native-vector-icons/Entypo";
-import postService, { Post } from "../../Services/post.model";
+import postService, { Post } from "../../services/post.model";
 import PostListCDF from "../../components/PostCDF/PostList";
 import CreerPost from "../../components/PostCDF/CreerPost";
+import Notification, {
+  schedulePushNotification,
+} from "../../components/Notification";
 
 interface CDFState {
   isAdmin: boolean;
@@ -45,6 +48,9 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
   addPost = (post: Post) => {
     postService.add(post);
     this.loadPosts();
+    async () => {
+      await schedulePushNotification(post);
+    };
   };
 
   // Fonction appelée lors de la suppression d'un post
@@ -77,17 +83,23 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
     this.loadPosts;
   };
 
-  componentDidMount() {
-    this.loadPosts();
-  }
+  // async componentDidMount() {
+  //   this.loadPosts();
+  // }
 
   render() {
     return (
       <View style={styles.mainContainer}>
-        <Button //Normalement, être admin est une caractéristique du l'utilisateur
-          onPress={() => this.setState({ isAdmin: !this.state.isAdmin })}
-          title="Switch admin ou user"
-          color="blue"
+        <Text style={{ alignSelf: "center", fontSize: 15 }}>
+          Mode Administrateur
+        </Text>
+        <Switch //Normalement, être admin est une caractéristique du l'utilisateur
+          trackColor={{ false: "#767577", true: "black" }}
+          thumbColor={this.state.isAdmin ? "#52234E" : "#f4f3f4"}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={() => this.setState({ isAdmin: !this.state.isAdmin })}
+          value={this.state.isAdmin}
+          style={styles.switchBtn}
         />
         <PostListCDF
           posts={this.state.data}
@@ -122,6 +134,7 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
             </TouchableOpacity>
           </View>
         ) : null}
+        <Notification />
       </View>
     );
   }
@@ -130,6 +143,9 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
+  },
+  switchBtn: {
+    alignSelf: "center",
   },
   text: {
     color: "white",

@@ -8,6 +8,7 @@ import {
   Alert,
   StyleSheet,
   Modal,
+  Dimensions,
 } from "react-native";
 import CreerEvent from "../../components/EventPoint/CreerEvent";
 import EventItem from "../../components/EventPoint/EventItem";
@@ -15,7 +16,8 @@ import {
   NavigationProps,
   RootStackParamList,
 } from "../../navigation/stackNavigators";
-import EventService, { Event } from "../../Services/event.model";
+import EventService, { Event } from "../../services/event.model";
+import { BarChart } from "react-native-chart-kit";
 
 interface PointsFamilleState {
   data: Array<Event>;
@@ -63,7 +65,7 @@ export default class PointsFamille extends Component<
           onPress: () => {
             if (idEvent) {
               EventService.remove(idEvent);
-              this.loadEvents;
+              //this.loadEvents;
             }
           },
         },
@@ -78,23 +80,29 @@ export default class PointsFamille extends Component<
   calculScore = (couleur: string) => {
     if (couleur == "bleu") {
       var bleu = 0;
-      this.state.data.map((item, index) => (bleu = bleu + item.bleu));
+      this.state.data.map((item, index) => (bleu = bleu + parseInt(item.bleu)));
       return bleu;
     } else if (couleur == "jaune") {
       var jaune = 0;
-      this.state.data.map((item, index) => (jaune = jaune + item.jaune));
+      this.state.data.map(
+        (item, index) => (jaune = jaune + parseInt(item.jaune))
+      );
       return jaune;
     } else if (couleur == "orange") {
       var orange = 0;
-      this.state.data.map((item, index) => (orange = orange + item.orange));
+      this.state.data.map(
+        (item, index) => (orange = orange + parseInt(item.orange))
+      );
       return orange;
     } else if (couleur == "rouge") {
       var rouge = 0;
-      this.state.data.map((item, index) => (rouge = rouge + item.rouge));
+      this.state.data.map(
+        (item, index) => (rouge = rouge + parseInt(item.rouge))
+      );
       return rouge;
     } else if (couleur == "vert") {
       var vert = 0;
-      this.state.data.map((item, index) => (vert = vert + item.vert));
+      this.state.data.map((item, index) => (vert = vert + parseInt(item.vert)));
       return vert;
     }
   };
@@ -118,31 +126,35 @@ export default class PointsFamille extends Component<
             </TouchableOpacity>
           </View>
         ) : null}
-        <View style={styles.scoreContainer}>
-          <Text>Score actuel</Text>
-          <View style={styles.tableauScoreFinal}>
-            <View>
-              <Text>Bleu</Text>
-              <Text>{this.calculScore("bleu")}</Text>
-            </View>
-            <View>
-              <Text>Jaune</Text>
-              <Text>{this.calculScore("jaune")}</Text>
-            </View>
-            <View>
-              <Text>Orange</Text>
-              <Text>{this.calculScore("orange")}</Text>
-            </View>
-            <View>
-              <Text>Rouge</Text>
-              <Text>{this.calculScore("rouge")}</Text>
-            </View>
-            <View>
-              <Text>Vert</Text>
-              <Text>{this.calculScore("vert")}</Text>
-            </View>
-          </View>
-        </View>
+        <BarChart
+          data={{
+            labels: ["Bleu", "Jaune", "Orange", "Rouge", "Vert"],
+            datasets: [
+              {
+                data: [
+                  Number(this.calculScore("bleu")),
+                  Number(this.calculScore("jaune")),
+                  Number(this.calculScore("orange")),
+                  Number(this.calculScore("rouge")),
+                  Number(this.calculScore("vert")),
+                ],
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width - 16}
+          height={220}
+          fromZero
+          chartConfig={{
+            backgroundGradientFrom: "#52234E",
+            backgroundGradientTo: "#52234E",
+            color: (opacity = 1) => `rgba(255,255,255, ${opacity})`,
+          }}
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+            alignSelf: "center",
+          }}
+        />
         <FlatList
           style={styles.list}
           data={this.state.data}
@@ -181,16 +193,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     color: "white",
   },
-  scoreContainer: {
-    flexBasis: 50,
-    flexDirection: "row",
-  },
   tableauScoreFinal: {
     flexDirection: "row",
-    flexBasis: "auto",
-    flexGrow: 1,
     justifyContent: "space-between",
     marginHorizontal: 15,
+    marginBottom: 15,
   },
   list: {
     flexBasis: "auto",

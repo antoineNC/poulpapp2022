@@ -9,23 +9,25 @@ import {
   Image,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import Constants from "expo-constants";
 import RNPickerSelect from "react-native-picker-select";
 import { FlatList } from "react-native-gesture-handler";
 import Tag from "./Tag";
 
 import * as ImagePicker from "expo-image-picker";
-import { Post } from "../../Services/post.model";
+import { Post } from "../../services/post.model";
 
 interface ModifPostState {
-  post: Post;
-  timePickerVisibleStart: boolean;
-  timePickerVisibleEnd: boolean;
+  id: string;
+  titre: string;
+  description: string;
+  image: string;
+  tags: Array<string>;
+  editor: string;
 }
 
 interface ModifPostProps {
-  updatePost: (post: Post) => void;
   postToUpdate: Post;
+  updatePost: (post: Post) => void;
   onPressClose: () => void;
 }
 
@@ -33,55 +35,52 @@ export default class ModifPost extends Component<
   ModifPostProps,
   ModifPostState
 > {
-  // Permet de récupérer la date d'aujourd'hui, pour afficher la valeur par défaut dans le dateTimePicker
-  getCurrentDate = () => {
-    var date = new Date().getDate();
-    var month = new Date().getMonth() + 1;
-    var year = new Date().getFullYear();
-    var today =
-      year +
-      "-" +
-      (month < 10 ? "0" : "") +
-      month +
-      "-" +
-      (date < 10 ? "0" : "") +
-      date;
-    return today;
-  };
+  oldPost = this.props.postToUpdate;
 
   // Chaque champ est initialisé avec les données du post à modifier
   state: ModifPostState = {
-    post: this.props.postToUpdate,
-    timePickerVisibleStart: false,
-    timePickerVisibleEnd: false,
+    id: this.props.postToUpdate.id,
+    titre: this.props.postToUpdate.titre,
+    description: this.props.postToUpdate.description,
+    image: this.props.postToUpdate.image,
+    tags: this.props.postToUpdate.tags,
+    editor: this.props.postToUpdate.editor,
+  };
+
+  back = () => {
+    this.props.updatePost(this.oldPost);
+    this.props.onPressClose();
   };
 
   updatePost = () => {
-    this.props.updatePost(this.state.post);
+    this.props.updatePost({
+      id: this.state.id,
+      titre: this.state.titre,
+      description: this.state.description,
+      image: this.state.image,
+      tags: this.state.tags,
+      editor: this.state.editor,
+    });
     this.props.onPressClose();
   };
 
   // Permet d'ajouter un tag à la liste
   addTag = (tag: string) => {
     if (!this.checkTag(tag)) {
-      var nvPost = this.state.post;
-      nvPost.tags = [...this.state.post.tags, tag];
-      this.setState({ post: nvPost });
+      var tags = [...this.state.tags, tag];
+      this.setState({ tags });
     }
   };
 
   // Permet de supprimer un tag de la liste
   removeTag = (tagDelete: string) => {
-    var nvPost = this.state.post;
-    nvPost.tags = this.state.post.tags.filter(
-      (tag: string) => tag !== tagDelete
-    );
-    this.setState({ post: nvPost });
+    var tags = this.state.tags.filter((tag: string) => tag !== tagDelete);
+    this.setState({ tags });
   };
 
   // Vérifie si le tag ajouté n'existe pas déjà dans la liste
   checkTag = (tag: string) => {
-    const arr = this.state.post.tags;
+    const arr = this.state.tags;
     if (arr != null && arr.length > 0) {
       for (var i = 0; i < arr.length; i++) {
         if (arr[i] == tag) {
@@ -104,17 +103,15 @@ export default class ModifPost extends Component<
     });
 
     if (!result.cancelled) {
-      var nvPost = this.state.post;
-      nvPost.image = result.uri;
-      this.setState({ post: nvPost });
+      var image = result.uri;
+      this.setState({ image });
     }
   };
 
   // Permet de supprimer l'image choisie (le chemin d'accès vaut "")
   deleteImage = () => {
-    var nvPost = this.state.post;
-    nvPost.image = "";
-    this.setState({ post: nvPost });
+    var image = "";
+    this.setState({ image });
   };
 
   render() {
@@ -138,10 +135,7 @@ export default class ModifPost extends Component<
       <View style={styles.mainContainer}>
         <View style={styles.header}>
           <Text style={styles.titre}>Modifier les post</Text>
-          <TouchableOpacity
-            style={styles.closeButton}
-            onPress={this.props.onPressClose}
-          >
+          <TouchableOpacity style={styles.closeButton} onPress={this.back}>
             <Icon name="window-close" color="#52234E" size={30} />
           </TouchableOpacity>
         </View>
@@ -149,25 +143,21 @@ export default class ModifPost extends Component<
           <View style={styles.form}>
             <View style={styles.textInput}>
               <TextInput
-                value={this.state.post.titre}
+                value={this.state.titre}
                 style={{ width: 300, fontSize: 15 }}
                 onChangeText={(text) => {
-                  var nvPost = this.state.post;
-                  nvPost.titre = text;
-                  this.setState({ post: nvPost });
+                  this.setState({ titre: text });
                 }}
               />
             </View>
 
             <View style={[styles.textInput, styles.textInputDescription]}>
               <TextInput
-                value={this.state.post.description}
+                value={this.state.description}
                 multiline={true}
                 style={styles.descriptionText}
                 onChangeText={(text) => {
-                  var nvPost = this.state.post;
-                  nvPost.description = text;
-                  this.setState({ post: nvPost });
+                  this.setState({ description: text });
                 }}
               />
             </View>
@@ -186,7 +176,7 @@ export default class ModifPost extends Component<
 
             <FlatList<string>
               contentContainerStyle={styles.tagsSelected}
-              data={this.state.post.tags}
+              data={this.state.tags}
               keyExtractor={(tag) => tag}
               renderItem={({ item }: { item: string }) => (
                 <Tag tag={item} removeTag={this.removeTag} />
@@ -195,12 +185,9 @@ export default class ModifPost extends Component<
           </View>
 
           {/*Si une image est sélectionnée, on l'affiche, et les boutons de supression et modification d'image apparaissent */}
-          {this.state.post.image != "" ? (
+          {this.state.image != "" ? (
             <View style={styles.imageView}>
-              <Image
-                source={{ uri: this.state.post.image }}
-                style={styles.image}
-              />
+              <Image source={{ uri: this.state.image }} style={styles.image} />
               <View style={{ flexDirection: "row" }}>
                 <TouchableOpacity
                   style={styles.buttonImage}

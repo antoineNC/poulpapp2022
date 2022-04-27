@@ -1,12 +1,5 @@
-import React, { Component, useState } from "react";
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  Modal,
-  TouchableOpacity,
-  Alert,
-} from "react-native";
+import React, { Component } from "react";
+import { View, FlatList, Modal, TouchableOpacity } from "react-native";
 import PostDisplayed from "./PostDisplayedCDF";
 import PostItemCDF from "./PostItemCDF";
 import { Post } from "../../services/post.model";

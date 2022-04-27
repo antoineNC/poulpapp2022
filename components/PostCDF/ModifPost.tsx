@@ -1,4 +1,4 @@
-import React, { useState, Component } from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
@@ -46,12 +46,13 @@ export default class ModifPost extends Component<
     tags: this.props.postToUpdate.tags,
     editor: this.props.postToUpdate.editor,
   };
-
+  //Permet de revenir sans mettre à jour
   back = () => {
     this.props.updatePost(this.oldPost);
     this.props.onPressClose();
   };
 
+  //Met à jour le post avec les nouvelles données
   updatePost = () => {
     this.props.updatePost({
       id: this.state.id,

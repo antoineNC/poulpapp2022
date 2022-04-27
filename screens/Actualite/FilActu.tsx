@@ -4,7 +4,6 @@ import Constants from "expo-constants";
 import { Icon } from "react-native-elements";
 //import firestoreService, { PostData } from "../../Services/firestore.service";
 import { NavigationProps } from "../../Navigation/stackNavigators";
-import { LogBox } from "react-native";
 
 export default class FilActuScreen extends Component<NavigationProps, {}> {
   render() {

@@ -8,12 +8,10 @@ import {
   FlatList,
   ScrollView,
   Image,
-  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import RNPickerSelect from "react-native-picker-select";
 import Tag from "./Tag";
-
 import * as ImagePicker from "expo-image-picker";
 import { LogBox } from "react-native";
 import { Post } from "../../services/post.model";

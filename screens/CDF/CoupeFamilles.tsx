@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useContext } from "react";
+import React, { Component } from "react";
 import {
   View,
   StyleSheet,
@@ -17,9 +17,6 @@ import Icon from "react-native-vector-icons/Entypo";
 import postService, { Post } from "../../services/post.model";
 import PostListCDF from "../../components/PostCDF/PostList";
 import CreerPost from "../../components/PostCDF/CreerPost";
-import Notification, {
-  schedulePushNotification,
-} from "../../components/Notification";
 
 interface CDFState {
   isAdmin: boolean;
@@ -48,9 +45,6 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
   addPost = (post: Post) => {
     postService.add(post);
     this.loadPosts();
-    async () => {
-      await schedulePushNotification(post);
-    };
   };
 
   // Fonction appelée lors de la suppression d'un post
@@ -134,7 +128,6 @@ export default class CoupeFamilles extends Component<CDFProps, CDFState, {}> {
             </TouchableOpacity>
           </View>
         ) : null}
-        <Notification />
       </View>
     );
   }

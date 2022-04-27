@@ -126,7 +126,7 @@ export default class PointsFamille extends Component<
             </TouchableOpacity>
           </View>
         ) : null}
-        <BarChart
+        <BarChart //Apparait parfois une erreur de surchage sans conséquences, pas trouvé de résolution encore
           data={{
             labels: ["Bleu", "Jaune", "Orange", "Rouge", "Vert"],
             datasets: [

@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Text, Button, TouchableOpacity } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import Constants from "expo-constants";
 import { NavigationProps } from "../navigation/stackNavigators";
 // import { Asso } from "../../services/firebase.service";
@@ -12,32 +12,6 @@ export default class Menu extends React.Component<NavigationProps, {}> {
           Partie codée sur un projet PII Poulpapp 2021
         </Text>
       </View>
-      // <View style={styles.main_container}>
-      //   <Boutton
-      //     text="Boîte à questions"
-      //     onPress={() => this.props.navigation.navigate("BoiteQuestions")}
-      //   />
-      //   <Boutton
-      //     text="Gérer mes posts"
-      //     onPress={() => this.props.navigation.navigate("GererMesPosts")}
-      //   />
-      //   <Boutton
-      //     text="Mon bureau"
-      //     onPress={() => this.props.navigation.navigate("Asso")}
-      //   />
-      //   <Boutton
-      //     text="Partenariats"
-      //     onPress={() => this.props.navigation.navigate("Partenariats")}
-      //   />
-      //   <Boutton
-      //     text="Clubs"
-      //     onPress={() => this.props.navigation.navigate("Clubs")}
-      //   />
-      //   <Boutton
-      //     text="Cartes d'adhésions"
-      //     onPress={() => this.props.navigation.navigate("CartesAdhesions")}
-      //   />
-      // </View>
     );
   }
 }
